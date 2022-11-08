@@ -1,0 +1,38 @@
+{
+  "id": "595ecb8e-dd95-4b51-8ea7-b9d6ef9f2582",
+  "name": "app",
+  "publisher": "Default publisher",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "19.0.0.0",
+  "idRanges": [
+    {
+      "from": 77000,
+      "to": 78000
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "8.0",
+  "target": "OnPrem",  
+  "features": [
+    "TranslationFile", 
+    "NoImplicitWith"
+  ],
+  "supportedLocales": [
+    "en-US",
+    "de-DE"
+  ]  
+}

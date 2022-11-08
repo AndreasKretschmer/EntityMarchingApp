@@ -1,0 +1,13 @@
+*/[Tt]emp/
+*/.vscode/launch*.json
+*/.vscode/.alcache/*
+*/.vscode/.altemplates
+*/.vscode/rad.json
+*/permissionsAnalyzer.json
+*/extensionsPermissionSet.xml
+*/.alpackages/
+*/.altestrunner/
+*.g.xlf
+*.app
+!/test/dependencies/*
+Channel Advisor.code-workspace
