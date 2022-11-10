@@ -12,7 +12,9 @@ codeunit 77001 "EM Blocking Management"
         EMCompareDSBlockingBuff.Insert(true);
     end;
 
-    procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean) BlockingKey: Text;
+    procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean; EntryNo: Integer) BlockingKey: Text;
+    var
+        EMSLKFieldSetup: Record "EM SLK Field Setup";
     begin
         BlockingKey := '';
         case BlockingMethod of
@@ -35,7 +37,19 @@ codeunit 77001 "EM Blocking Management"
                             BlockingKey += CalculateSoundexBlockingKey(SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 2 Field No."));
                     until EMCompareDSFieldMapping.Next() = 0;
             Enum::"EM Blocking Method"::SLK:
-                exit(CalculateSLKBlockingKey(SourceRecordref));
+                begin
+                    EMSLKFieldSetup.GetSetupAndCheckFields(EntryNo);
+                    if Dataset1 then
+                        BlockingKey += CalculateSLKBlockingKey(SourceRecordref.Field(EMSLKFieldSetup."Field No. Family Name DS 1"),
+                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. First Name DS 1"),
+                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Date of Birth DS 1"),
+                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Gender DS 1"))
+                    else
+                        BlockingKey += CalculateSLKBlockingKey(SourceRecordref.Field(EMSLKFieldSetup."Field No. Family Name DS 2"),
+                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. First Name DS 2"),
+                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Date of Birth DS 2"),
+                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Gender DS 2"))
+                end;
         //TODO Canopy Clustering as additional Blocking Option
         end;
 
@@ -72,7 +86,7 @@ codeunit 77001 "EM Blocking Management"
                         EMCompareDatasets."Entry No.",
                         SourceRecordRef.Number,
                         SourceRecordRef.RecordId,
-                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1)
+                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1, EMCompareDatasets."Entry No.")
                     );
                 end;
             until SourceRecordRef.Next() = 0;
@@ -106,8 +120,7 @@ codeunit 77001 "EM Blocking Management"
         SoundexIndex := 1;
 
         repeat
-            c := CopyStr(TextValue, 1, 1);
-            TextValue := CopyStr(TextValue, 2);
+            c := GetSingleCharacterOfStringFromLeftToRight(TextValue);
             if SoundexIndex = 1 then begin
                 SoundexCoding[SoundexIndex] := c.ToUpper();
                 SoundexIndex += 1;
@@ -130,8 +143,73 @@ codeunit 77001 "EM Blocking Management"
         exit(BlockingKey)
     end;
 
-    local procedure CalculateSLKBlockingKey(SourceRecordref: RecordRef): Code[50]
+    local procedure GetSingleCharacterOfStringFromLeftToRight(var TextValue: Text) c: Text[1]
     begin
-        //TODO Implement SLK Blocking (Maybe additionl checks have to made previously, due to SLK Blocking only support person data)
+        c := CopyStr(TextValue, 1, 1);
+        TextValue := CopyStr(TextValue, 2);
+    end;
+
+    local procedure CalculateSLKBlockingKey(SourceFieldrefFamilyName: FieldRef; SourceFieldrefFirstName: FieldRef; SourceFieldrefDateOfBirth: FieldRef; SourceFieldrefGender: FieldRef) SLKCoding: Text
+    var
+        NameCharIndexList: List of [Integer];
+    begin
+        //get Family Name SLKCoding - 2nd, 3rd and 5th character of the family name
+        Clear(NameCharIndexList);
+        NameCharIndexList.Add(2);
+        NameCharIndexList.Add(3);
+        NameCharIndexList.Add(5);
+        SLKCoding += ConvertNameToSLK(Format(SourceFieldrefFamilyName.Value), NameCharIndexList);
+
+        //get Family Name SLKCoding - 2nd, 3rd first name
+        Clear(NameCharIndexList);
+        NameCharIndexList.Add(2);
+        NameCharIndexList.Add(3);
+        SLKCoding += ConvertNameToSLK(Format(SourceFieldrefFirstName.Value), NameCharIndexList);
+
+        SLKCoding += ConvertDateOfBirthToSLK(SourceFieldrefDateOfBirth.Value);
+        SLKCoding += ConvertGenderToSLK(Format(SourceFieldrefGender.Value));
+    end;
+
+    local procedure ConvertNameToSLK(Name: Text; IndexList: List of [Integer]) SLKCoding: Text
+    var
+        i: Integer;
+        c: Text[1];
+    begin
+        if Name = '' then begin
+            for i := 1 to IndexList.Count do
+                SLKCoding += '9';
+            exit(SLKCoding)
+        end;
+
+        i := 1;
+        Name := DelChr(Name, '=', ' |-|?|!|#|+');
+        repeat
+            c := GetSingleCharacterOfStringFromLeftToRight(Name);
+            if IndexList.Contains(i) then
+                SLKCoding += c;
+            i += 1;
+        until (StrLen(Name) = 0) or (StrLen(SLKCoding) = IndexList.Count);
+
+        while StrLen(SLKCoding) < IndexList.Count do
+            SLKCoding += '2';
+
+        exit(SLKCoding)
+    end;
+
+    local procedure ConvertGenderToSLK(gender: Text): Text
+    begin
+        if not (gender.ToLower() in ['male', 'female']) then
+            exit('9');
+        if gender.ToLower() = 'female' then
+            exit('2')
+        else
+            exit('1');
+    end;
+
+    local procedure ConvertDateOfBirthToSLK(DateOfBirth: Date): Text
+    begin
+        if DateOfBirth = 0D then
+            exit('UUU');
+        exit(Format(DateOfBirth, 0, '<Day,2><Month,2><Year,4>'))
     end;
 }

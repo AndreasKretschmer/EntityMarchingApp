@@ -22,13 +22,13 @@ table 77003 "EM Compare DS Field Mapping"
         {
             Caption = 'Dataset 1 Field No.';
             DataClassification = CustomerContent;
-            // TableRelation = Field."No." where(TableNo = field("Dataset 1 Table No."));
+            TableRelation = Field."No." where(TableNo = field("Dataset 1 Table No."));
         }
         field(4; "Dataset 2 Field No."; Integer)
         {
             Caption = 'Dataset 2 Field No.';
             DataClassification = CustomerContent;
-            // TableRelation = Field."No." where(TableNo = field("Dataset 2 Table No."));
+            TableRelation = Field."No." where(TableNo = field("Dataset 2 Table No."));
         }
         field(5; "Dataset 1 Field Name"; Text[100])
         {

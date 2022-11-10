@@ -30,14 +30,14 @@ table 77002 "EM Compare Datasets"
             Caption = 'DataSet 1 Table Name';
             Editable = false;
             FieldClass = FlowField;
-            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = const(Table)));
+            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = const(Table), "Object ID" = field("Dataset 1 Table No.")));
         }
         field(5; "Dataset 2 Table Name"; Text[100])
         {
             Caption = 'Dataset 2 Table Name';
             Editable = false;
             FieldClass = FlowField;
-            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = const(Table)));
+            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = const(Table), "Object ID" = field("Dataset 2 Table No.")));
         }
         field(6; "Distance Method"; Enum "EM Distance Methods")
         {
