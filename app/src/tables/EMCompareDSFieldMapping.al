@@ -54,15 +54,25 @@ table 77003 "EM Compare DS Field Mapping"
         {
             Caption = 'Dataset 1 Table No.';
             DataClassification = CustomerContent;
-            // Editable = false;
+            Editable = false;
             TableRelation = AllObjWithCaption."Object ID" where("Object Type" = const(Table));
         }
         field(9; "Dataset 2 Table No."; Integer)
         {
             Caption = 'Dataset 2 Table No.';
             DataClassification = CustomerContent;
-            // Editable = false;
+            Editable = false;
             TableRelation = AllObjWithCaption."Object ID" where("Object Type" = const(Table));
+        }
+        field(10; "SLK Field Type"; Enum "EM SLK Field Type")
+        {
+            Caption = 'SLK Field Type';
+            DataClassification = CustomerContent;
+        }
+        field(11; "Distance Method"; Enum "EM Distance Methods")
+        {
+            Caption = 'Distance Method';
+            DataClassification = CustomerContent;
         }
     }
     keys

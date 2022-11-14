@@ -1,20 +1,81 @@
 codeunit 77001 "EM Blocking Management"
 {
-    procedure CreateBlockingBufferEntries(CompareDSEntryNo: Integer; TableNo: Integer; SourceRecordId: RecordId; BlockingKey: Text)
+    procedure StartBlocking(EMCompareDatasets: Record "EM Compare Datasets")
+    var
+        EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping";
+    begin
+        if (EMCompareDatasets."Dataset 1 Table No." = 0) or (EMCompareDatasets."Dataset 2 Table No." = 0) then
+            exit;
+
+        EMCompareDatasets.FilterFieldMappingBlocking(EMCompareDSFieldMapping);
+        if EMCompareDSFieldMapping.IsEmpty() then
+            exit;
+
+        //CreateBlockingKeys for DataSet 1
+        CreateBlockingKeyForDataset(EMCompareDatasets."Dataset 1 Table No.", EMCompareDatasets, EMCompareDSFieldMapping, true);
+        //CreateBlockingKeys for DataSet 2
+        CreateBlockingKeyForDataset(EMCompareDatasets."Dataset 2 Table No.", EMCompareDatasets, EMCompareDSFieldMapping, false);
+    end;
+
+    procedure StartBlocking(EMCompareDatasets: Record "EM Compare Datasets"; var BlockingDictDS1: Dictionary of [Text, List of [RecordId]]; var BlockingDictDS2: Dictionary of [Text, List of [RecordId]])
+    var
+        EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping";
+    begin
+        if (EMCompareDatasets."Dataset 1 Table No." = 0) or (EMCompareDatasets."Dataset 2 Table No." = 0) then
+            exit;
+
+        EMCompareDatasets.FilterFieldMappingBlocking(EMCompareDSFieldMapping);
+        if EMCompareDSFieldMapping.IsEmpty() then
+            exit;
+
+        //CreateBlockingKeys for DataSet 1
+        CreateBlockingKeyForDataset(EMCompareDatasets."Dataset 1 Table No.", EMCompareDatasets, EMCompareDSFieldMapping, true);
+        //CreateBlockingKeys for DataSet 2
+        CreateBlockingKeyForDataset(EMCompareDatasets."Dataset 2 Table No.", EMCompareDatasets, EMCompareDSFieldMapping, false);
+        BlockingDictDS1 := CreateBlockingDictionary(EMCompareDatasets."Dataset 1 Table No.", EMCompareDatasets."Blocking Method");
+        BlockingDictDS2 := CreateBlockingDictionary(EMCompareDatasets."Dataset 2 Table No.", EMCompareDatasets."Blocking Method");
+    end;
+
+    local procedure CreateBlockingDictionary(TableNo: Integer; BlockingMethod: Enum "EM Blocking Method") BlockingDict: Dictionary of [Text, List of [RecordId]];
+    var
+        EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
+        TempValueList: List of [RecordId];
+    begin
+        EMCompareDSBlockingBuff.Reset();
+        EMCompareDSBlockingBuff.SetRange("Blocking Method", BlockingMethod);
+        EMCompareDSBlockingBuff.SetRange("Dataset Table No.", TableNo);
+        if EMCompareDSBlockingBuff.FindSet() then
+            repeat
+                if not BlockingDict.ContainsKey(EMCompareDSBlockingBuff."Blocking Key") then begin
+                    Clear(TempValueList);
+                    TempValueList.Add(EMCompareDSBlockingBuff."DataSet Record Id");
+                    BlockingDict.Add(EMCompareDSBlockingBuff."Blocking Key", TempValueList);
+                end else begin
+                    BlockingDict.Get(EMCompareDSBlockingBuff."Blocking Key", TempValueList);
+                    TempValueList.Add(EMCompareDSBlockingBuff."DataSet Record Id");
+                    BlockingDict.Set(EMCompareDSBlockingBuff."Blocking Key", TempValueList)
+                end;
+            until EMCompareDSBlockingBuff.Next() = 0;
+    end;
+
+    local procedure CreateBlockingBufferEntries(CompareDSEntryNo: Integer; TableNo: Integer; SourceRecordId: RecordId; BlockingKey: Text; BlockingMethod: Enum "EM Blocking Method")
     var
         EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
     begin
         EMCompareDSBlockingBuff.Init();
-        EMCompareDSBlockingBuff.Validate("Compare Dataset Entry No.", CompareDSEntryNo);
         EMCompareDSBlockingBuff.Validate("Dataset Table No.", TableNo);
         EMCompareDSBlockingBuff.Validate("DataSet Record Id", SourceRecordId);
         EMCompareDSBlockingBuff.Validate("Blocking Key", CopyStr(BlockingKey, 1, MaxStrLen(EMCompareDSBlockingBuff."Blocking Key")));
+        EMCompareDSBlockingBuff.Validate("Blocking Method", BlockingMethod);
         EMCompareDSBlockingBuff.Insert(true);
     end;
 
-    procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean; EntryNo: Integer) BlockingKey: Text;
+    local procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean; EntryNo: Integer) BlockingKey: Text;
     var
-        EMSLKFieldSetup: Record "EM SLK Field Setup";
+        FieldRefFamilyName: FieldRef;
+        FieldRefFirstName: FieldRef;
+        FieldRefDoB: FieldRef;
+        FieldRefGender: FieldRef;
     begin
         BlockingKey := '';
         case BlockingMethod of
@@ -38,39 +99,36 @@ codeunit 77001 "EM Blocking Management"
                     until EMCompareDSFieldMapping.Next() = 0;
             Enum::"EM Blocking Method"::SLK:
                 begin
-                    EMSLKFieldSetup.GetSetupAndCheckFields(EntryNo);
-                    if Dataset1 then
-                        BlockingKey += CalculateSLKBlockingKey(SourceRecordref.Field(EMSLKFieldSetup."Field No. Family Name DS 1"),
-                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. First Name DS 1"),
-                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Date of Birth DS 1"),
-                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Gender DS 1"))
-                    else
-                        BlockingKey += CalculateSLKBlockingKey(SourceRecordref.Field(EMSLKFieldSetup."Field No. Family Name DS 2"),
-                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. First Name DS 2"),
-                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Date of Birth DS 2"),
-                                                                SourceRecordref.Field(EMSLKFieldSetup."Field No. Gender DS 2"))
+                    if EMCompareDSFieldMapping.FindSet() then
+                        repeat
+                            if Dataset1 then
+                                case EMCompareDSFieldMapping."SLK Field Type" of
+                                    Enum::"EM SLK Field Type"::"Family Name":
+                                        FieldRefFamilyName := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 1 Field No.");
+                                    Enum::"EM SLK Field Type"::"First Name":
+                                        FieldRefFirstName := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 1 Field No.");
+                                    Enum::"EM SLK Field Type"::"Date of Birth":
+                                        FieldRefDoB := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 1 Field No.");
+                                    Enum::"EM SLK Field Type"::Gender:
+                                        FieldRefGender := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 1 Field No.");
+                                end
+                            else
+                                case EMCompareDSFieldMapping."SLK Field Type" of
+                                    Enum::"EM SLK Field Type"::"Family Name":
+                                        FieldRefFamilyName := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 2 Field No.");
+                                    Enum::"EM SLK Field Type"::"First Name":
+                                        FieldRefFirstName := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 2 Field No.");
+                                    Enum::"EM SLK Field Type"::"Date of Birth":
+                                        FieldRefDoB := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 2 Field No.");
+                                    Enum::"EM SLK Field Type"::Gender:
+                                        FieldRefGender := SourceRecordref.Field(EMCompareDSFieldMapping."Dataset 2 Field No.");
+                                end
+                        until EMCompareDSFieldMapping.Next() = 0;
+                    BlockingKey := CalculateSLKBlockingKey(FieldRefFamilyName, FieldRefFirstName, FieldRefDoB, FieldRefGender);
                 end;
-        //TODO Canopy Clustering as additional Blocking Option
         end;
-
+        //TODO Canopy Clustering as additional Blocking Option
         exit(BlockingKey);
-    end;
-
-    procedure StartBlocking(EMCompareDatasets: Record "EM Compare Datasets")
-    var
-        EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping";
-    begin
-        if (EMCompareDatasets."Dataset 1 Table No." = 0) or (EMCompareDatasets."Dataset 2 Table No." = 0) then
-            exit;
-
-        EMCompareDatasets.FilterFieldMappingBlocking(EMCompareDSFieldMapping);
-        if EMCompareDSFieldMapping.IsEmpty() then
-            exit;
-
-        //CreateBlockingKeys for DataSet 1
-        CreateBlockingKeyForDataset(EMCompareDatasets."Dataset 1 Table No.", EMCompareDatasets, EMCompareDSFieldMapping, true);
-        //CreateBlockingKeys for DataSet 2
-        CreateBlockingKeyForDataset(EMCompareDatasets."Dataset 2 Table No.", EMCompareDatasets, EMCompareDSFieldMapping, false);
     end;
 
     local procedure CreateBlockingKeyForDataset(TableNo: Integer; EMCompareDatasets: Record "EM Compare Datasets"; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean)
@@ -81,23 +139,24 @@ codeunit 77001 "EM Blocking Management"
         if SourceRecordRef.FindSet() then
             repeat
                 //TODO Maybe the Blocking Key should be updated, if the SourceRecord was modified
-                if not ExistsBlockingBufferEntryForRecordRef(SourceRecordRef, EMCompareDatasets."Entry No.") then begin
+                if not ExistsBlockingBufferEntryForRecordRef(SourceRecordRef, EMCompareDatasets."Blocking Method") then begin
                     CreateBlockingBufferEntries(
                         EMCompareDatasets."Entry No.",
                         SourceRecordRef.Number,
                         SourceRecordRef.RecordId,
-                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1, EMCompareDatasets."Entry No.")
+                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1, EMCompareDatasets."Entry No."),
+                        EMCompareDatasets."Blocking Method"
                     );
                 end;
             until SourceRecordRef.Next() = 0;
     end;
 
-    procedure ExistsBlockingBufferEntryForRecordRef(SourceRecordRef: RecordRef; EntryNo: Integer): Boolean
+    procedure ExistsBlockingBufferEntryForRecordRef(SourceRecordRef: RecordRef; BlockingMehtod: Enum "EM Blocking Method"): Boolean
     var
         EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
     begin
         EMCompareDSBlockingBuff.Reset();
-        EMCompareDSBlockingBuff.SetRange("Compare Dataset Entry No.", EntryNo);
+        EMCompareDSBlockingBuff.SetRange("Blocking Method", BlockingMehtod);
         EMCompareDSBlockingBuff.SetRange("Dataset Table No.", SourceRecordRef.Number);
         EMCompareDSBlockingBuff.SetRange("DataSet Record Id", SourceRecordRef.RecordId);
         exit(not EMCompareDSBlockingBuff.IsEmpty);

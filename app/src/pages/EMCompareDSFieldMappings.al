@@ -46,6 +46,11 @@ page 77003 "EM Compare DS Field Mappings"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Use for Blocking field.';
                 }
+                field("Distance Method"; Rec."Distance Method")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Use for Distance Method field.';
+                }
             }
         }
     }

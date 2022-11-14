@@ -39,11 +39,7 @@ table 77002 "EM Compare Datasets"
             FieldClass = FlowField;
             CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = const(Table), "Object ID" = field("Dataset 2 Table No.")));
         }
-        field(6; "Distance Method"; Enum "EM Distance Methods")
-        {
-            Caption = 'Distance Method';
-            DataClassification = CustomerContent;
-        }
+
         field(7; "Blocking Method"; Enum "EM Blocking Method")
         {
             Caption = 'Blocking Method';
@@ -68,5 +64,11 @@ table 77002 "EM Compare Datasets"
     begin
         FilterFieldMapping(EMCompareDatasetsFieldMapp);
         EMCompareDatasetsFieldMapp.SetRange("Use for Blocking", true);
+    end;
+
+    procedure FilterFieldMappingSimilarity(var EMCompareDatasetsFieldMapp: Record "EM Compare DS Field Mapping")
+    begin
+        FilterFieldMapping(EMCompareDatasetsFieldMapp);
+        EMCompareDatasetsFieldMapp.SetFilter("Distance Method", '<>%1', EMCompareDatasetsFieldMapp."Distance Method"::" ");
     end;
 }

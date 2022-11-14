@@ -42,11 +42,11 @@ page 77001 "EM Compare Datasets"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Blocking Method field.';
                 }
-                field("Distance Method"; Rec."Distance Method")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Distance Method field.';
-                }
+            }
+            part(FieldMapping; "EM Compare DS Field Mappings")
+            {
+                ApplicationArea = all;
+                SubPageLink = "Compare Dataset Entry No." = field("Entry No.");
             }
         }
     }
@@ -63,8 +63,20 @@ page 77001 "EM Compare Datasets"
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = BulletList;
-                RunObject = page "EM Compare DS Blocking Buffer";
-                RunPageLink = "Compare Dataset Entry No." = field("Entry No.");
+
+                trigger OnAction()
+                var
+                    EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
+                    EMCompareDSBlockingBuffer: Page "EM Compare DS Blocking Buffer";
+                begin
+                    EMCompareDSBlockingBuff.Reset();
+                    EMCompareDSBlockingBuff.SetRange("Blocking Method", Rec."Blocking Method");
+                    EMCompareDSBlockingBuff.SetFilter("Dataset Table No.", '%1|%2', Rec."Dataset 1 Table No.", Rec."Dataset 2 Table No.");
+
+                    Clear(EMCompareDSBlockingBuffer);
+                    EMCompareDSBlockingBuffer.SetTableView(EMCompareDSBlockingBuff);
+                    EMCompareDSBlockingBuffer.Run();
+                end;
             }
 
             action("Field Mappings")
@@ -89,7 +101,6 @@ page 77001 "EM Compare Datasets"
                 PromotedIsBig = true;
                 Image = BulletList;
                 RunObject = page "EM SLK Field Setup Card";
-                RunPageLink = "Compare DS Entry No." = field("Entry No."), "Table No. DS 1" = field("Dataset 1 Table No."), "Table No. DS 2" = field("Dataset 2 Table No.");
                 RunPageMode = Create;
             }
         }

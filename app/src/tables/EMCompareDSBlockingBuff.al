@@ -7,25 +7,25 @@ table 77004 "EM Compare DS Blocking Buff."
 
     fields
     {
-        field(1; "Compare Dataset Entry No."; Integer)
+        field(2; "Blocking Method"; Enum "EM Blocking Method")
         {
-            Caption = 'Compare Dataset Entry No.';
+            Caption = 'Blocking Method';
             DataClassification = SystemMetadata;
             Editable = false;
         }
-        field(2; "Dataset Table No."; Integer)
+        field(3; "Dataset Table No."; Integer)
         {
             Caption = 'Dataset Table No.';
             DataClassification = SystemMetadata;
             Editable = false;
         }
-        field(3; "DataSet Record Id"; RecordId)
+        field(4; "DataSet Record Id"; RecordId)
         {
             Caption = 'DataSet Record Id';
             DataClassification = SystemMetadata;
             Editable = false;
         }
-        field(4; "Blocking Key"; Text[2042])
+        field(5; "Blocking Key"; Text[2042])
         {
             Caption = 'Blocking Key';
             DataClassification = SystemMetadata;
@@ -34,7 +34,7 @@ table 77004 "EM Compare DS Blocking Buff."
     }
     keys
     {
-        key(PK; "Compare Dataset Entry No.", "Dataset Table No.", "DataSet Record Id")
+        key(PK; "Blocking Method", "Dataset Table No.", "DataSet Record Id")
         {
             Clustered = true;
         }
