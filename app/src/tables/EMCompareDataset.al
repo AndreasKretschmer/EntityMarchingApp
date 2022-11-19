@@ -39,8 +39,12 @@ table 77002 "EM Compare Datasets"
             FieldClass = FlowField;
             CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = const(Table), "Object ID" = field("Dataset 2 Table No.")));
         }
-
-        field(7; "Blocking Method"; Enum "EM Blocking Method")
+        field(6; "Blocking Method"; Enum "EM Blocking Method")
+        {
+            Caption = 'Blocking Method';
+            DataClassification = CustomerContent;
+        }
+        field(7; "Classification Method"; Enum "EM Classification Method")
         {
             Caption = 'Blocking Method';
             DataClassification = CustomerContent;

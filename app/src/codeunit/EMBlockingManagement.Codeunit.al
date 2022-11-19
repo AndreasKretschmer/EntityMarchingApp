@@ -58,7 +58,7 @@ codeunit 77001 "EM Blocking Management"
             until EMCompareDSBlockingBuff.Next() = 0;
     end;
 
-    local procedure CreateBlockingBufferEntries(CompareDSEntryNo: Integer; TableNo: Integer; SourceRecordId: RecordId; BlockingKey: Text; BlockingMethod: Enum "EM Blocking Method")
+    local procedure CreateBlockingBufferEntries(TableNo: Integer; SourceRecordId: RecordId; BlockingKey: Text; BlockingMethod: Enum "EM Blocking Method")
     var
         EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
     begin
@@ -70,7 +70,7 @@ codeunit 77001 "EM Blocking Management"
         EMCompareDSBlockingBuff.Insert(true);
     end;
 
-    local procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean; EntryNo: Integer) BlockingKey: Text;
+    local procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean) BlockingKey: Text;
     var
         FieldRefFamilyName: FieldRef;
         FieldRefFirstName: FieldRef;
@@ -141,10 +141,9 @@ codeunit 77001 "EM Blocking Management"
                 //TODO Maybe the Blocking Key should be updated, if the SourceRecord was modified
                 if not ExistsBlockingBufferEntryForRecordRef(SourceRecordRef, EMCompareDatasets."Blocking Method") then begin
                     CreateBlockingBufferEntries(
-                        EMCompareDatasets."Entry No.",
                         SourceRecordRef.Number,
                         SourceRecordRef.RecordId,
-                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1, EMCompareDatasets."Entry No."),
+                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1),
                         EMCompareDatasets."Blocking Method"
                     );
                 end;

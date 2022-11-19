@@ -74,6 +74,11 @@ table 77003 "EM Compare DS Field Mapping"
             Caption = 'Distance Method';
             DataClassification = CustomerContent;
         }
+        field(12; "Weighted Similarity"; Decimal)
+        {
+            Caption = 'Weighted Similarity';
+            DataClassification = CustomerContent;
+        }
     }
     keys
     {

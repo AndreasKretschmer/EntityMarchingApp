@@ -15,6 +15,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. Date of Birth DS 1 field.';
+                        Caption = 'Field No. Family Name DS 1';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -30,6 +31,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. Family Name DS 1 field.';
+                        Caption = 'Field No. First Name DS 1';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -45,6 +47,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. First Name DS 1 field.';
+                        Caption = 'Field No. Date of Birth DS 1';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -60,6 +63,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. Gender DS 1 field.';
+                        Caption = 'Field No. Gender DS 1';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -78,6 +82,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. Date of Birth DS 2 field.';
+                        Caption = 'Field No. Family Name DS 2';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -93,6 +98,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. Family Name DS 2 field.';
+                        Caption = 'Field No. First Name DS 2';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -108,6 +114,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. First Name DS 2 field.';
+                        Caption = 'Field No. Date of Birth DS 2';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -123,6 +130,7 @@ page 77005 "EM SLK Field Setup Card"
                     {
                         ApplicationArea = All;
                         ToolTip = 'Specifies the value of the Field No. Gender DS 2 field.';
+                        Caption = 'Field No. Gender DS 2';
 
                         trigger OnLookup(var Text: Text): Boolean
                         begin
@@ -149,21 +157,21 @@ page 77005 "EM SLK Field Setup Card"
 
     local procedure OpenFieldLookupPage(var Value: Text; TableNo: Integer): Boolean
     var
-        Field: Record Field temporary;
+        TempField: Record Field temporary;
         FieldsLookup: Page "Fields Lookup";
     begin
         Value := '';
-        Field.Reset();
-        Field.SetRange(TableNo, TableNo);
+        TempField.Reset();
+        TempField.SetRange(TableNo, TableNo);
 
         Clear(FieldsLookup);
         FieldsLookup.LookupMode(true);
-        FieldsLookup.SetTableView(Field);
+        FieldsLookup.SetTableView(TempField);
         if FieldsLookup.RunModal() <> Action::LookupOK then
             exit(false);
 
-        FieldsLookup.GetRecord(Field);
-        Value := Format(Field."No.");
+        FieldsLookup.GetRecord(TempField);
+        Value := Format(TempField."No.");
         exit(Value <> '');
     end;
 

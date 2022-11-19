@@ -42,6 +42,11 @@ page 77001 "EM Compare Datasets"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Blocking Method field.';
                 }
+                field("Classification Method"; Rec."Classification Method")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Classification Method field.';
+                }
             }
             part(FieldMapping; "EM Compare DS Field Mappings")
             {
@@ -122,6 +127,22 @@ page 77001 "EM Compare Datasets"
                     EMManagement: Codeunit "EM Management";
                 begin
                     EMManagement.Run(Rec);
+                end;
+            }
+            action("Calculate Weights")
+            {
+                ApplicationArea = All;
+                Caption = 'Calculate Weights';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                Image = Calculate;
+
+                trigger OnAction()
+                var
+                    EMClassificationManagement: Codeunit "EM Classification Management";
+                begin
+                    EMClassificationManagement.CalculateWeightSimVec(Rec);
                 end;
             }
         }

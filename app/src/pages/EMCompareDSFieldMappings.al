@@ -51,6 +51,11 @@ page 77003 "EM Compare DS Field Mappings"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Use for Distance Method field.';
                 }
+                field("Weighted Similarity"; Rec."Weighted Similarity")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Use for Weighted Similarity field.';
+                }
             }
         }
     }

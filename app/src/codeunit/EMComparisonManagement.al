@@ -71,6 +71,7 @@ codeunit 77002 "EM Comparison Management"
 
     local procedure GetJaccardSimilarity(ValueDS1: Text; ValueDS2: Text): Decimal
     var
+        EMSetManagement: Codeunit "EM Set Management";
         nGramList1: List of [Text];
         nGramList2: List of [Text];
         i: Integer;
@@ -85,14 +86,15 @@ codeunit 77002 "EM Comparison Management"
         nGramList1 := CreateNgrams(ValueDS1, 3);
         nGramList2 := CreateNgrams(ValueDS1, 3);
 
-        i := GetLenOfIntersectionOfLists(nGramList1, nGramList2);
-        u := GetLenOfUnionOfLists(nGramList1, nGramList2);
+        i := EMSetManagement.GetLenOfIntersectionOfLists(nGramList1, nGramList2);
+        u := EMSetManagement.GetLenOfUnionOfLists(nGramList1, nGramList2);
 
         exit(i / u);
     end;
 
     local procedure GetDiceSimilarity(ValueDS1: Text; ValueDS2: Text): Decimal
     var
+        EMSetManagement: Codeunit "EM Set Management";
         nGramList1: List of [Text];
         nGramList2: List of [Text];
         i: Integer;
@@ -107,7 +109,7 @@ codeunit 77002 "EM Comparison Management"
         nGramList1 := CreateNgrams(ValueDS1, 3);
         nGramList2 := CreateNgrams(ValueDS1, 3);
 
-        i := GetLenOfIntersectionOfLists(nGramList1, nGramList2);
+        i := EMSetManagement.GetLenOfIntersectionOfLists(nGramList1, nGramList2);
 
         exit(2 * i / (nGramList1.Count + nGramList2.Count));
     end;
@@ -167,25 +169,6 @@ codeunit 77002 "EM Comparison Management"
         n := StrLen(ValueDS1);
         m := StrLen(ValueDS2);
 
-    end;
-
-    local procedure GetLenOfUnionOfLists(List1: List of [Text]; List2: List of [Text]) u: Integer
-    var
-        nGram: Text;
-    begin
-        u := List1.Count();
-        foreach nGram in List2 do
-            if not List1.Contains(nGram) then
-                u += 1;
-    end;
-
-    local procedure GetLenOfIntersectionOfLists(List1: List of [Text]; List2: List of [Text]) u: Integer
-    var
-        nGram: Text;
-    begin
-        foreach nGram in List1 do
-            if List2.Contains(nGram) then
-                u += 1;
     end;
 
     local procedure CreateNgrams(Value: Text; n: Integer) nGramList: List of [Text];
