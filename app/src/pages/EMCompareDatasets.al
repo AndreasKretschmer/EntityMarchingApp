@@ -89,7 +89,6 @@ page 77001 "EM Compare Datasets"
                     EMCompareDSBlockingBuffer.Run();
                 end;
             }
-
             action("Field Mappings")
             {
                 ApplicationArea = All;
@@ -102,7 +101,17 @@ page 77001 "EM Compare Datasets"
                 RunPageLink = "Compare Dataset Entry No." = field("Entry No."), "Dataset 1 Table No." = field("Dataset 1 Table No."), "Dataset 2 Table No." = field("Dataset 2 Table No.");
                 RunPageMode = Edit;
             }
-
+            action("Classification Results")
+            {
+                ApplicationArea = All;
+                Caption = 'Classification Results';
+                Promoted = true;
+                PromotedCategory = Category5;
+                PromotedIsBig = true;
+                Image = TaskList;
+                RunObject = page "EM Classification Results";
+                RunPageMode = View;
+            }
             action("SLK Field Setup")
             {
                 ApplicationArea = All;
@@ -114,7 +123,6 @@ page 77001 "EM Compare Datasets"
                 RunObject = page "EM SLK Field Setup Card";
                 RunPageMode = Create;
             }
-
             action("Example Dataset 1")
             {
                 ApplicationArea = All;
@@ -132,7 +140,6 @@ page 77001 "EM Compare Datasets"
                 RunPageMode = View;
             }
         }
-
 
         area(Processing)
         {

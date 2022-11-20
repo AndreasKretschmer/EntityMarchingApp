@@ -16,7 +16,7 @@ codeunit 77002 "EM Comparison Management"
                 BlockingDictDS2.Get(BlockKey, RecordIdListDS2);
                 foreach RecordIDDS1 in RecordIdListDS1 do
                     foreach RecordIDDS2 in RecordIdListDS2 do
-                        SimilarityDict.Add(Format(RecordIDDS1) + Format(RecordIDDS2), CompareRecords(RecordIDDS1, RecordIDDS2, EMCompareDSFieldMapping));
+                        SimilarityDict.Add(Format(RecordIDDS1) + ';' + Format(RecordIDDS2), CompareRecords(RecordIDDS1, RecordIDDS2, EMCompareDSFieldMapping));
             end;
     end;
 
@@ -84,7 +84,7 @@ codeunit 77002 "EM Comparison Management"
             exit(1);
 
         nGramList1 := CreateNgrams(ValueDS1, 3);
-        nGramList2 := CreateNgrams(ValueDS1, 3);
+        nGramList2 := CreateNgrams(ValueDS2, 3);
 
         i := EMSetManagement.GetLenOfIntersectionOfLists(nGramList1, nGramList2);
         u := EMSetManagement.GetLenOfUnionOfLists(nGramList1, nGramList2);
@@ -107,7 +107,7 @@ codeunit 77002 "EM Comparison Management"
             exit(1);
 
         nGramList1 := CreateNgrams(ValueDS1, 3);
-        nGramList2 := CreateNgrams(ValueDS1, 3);
+        nGramList2 := CreateNgrams(ValueDS2, 3);
 
         i := EMSetManagement.GetLenOfIntersectionOfLists(nGramList1, nGramList2);
 
@@ -175,10 +175,10 @@ codeunit 77002 "EM Comparison Management"
     var
         i: Integer;
     begin
-        Value := Value.PadLeft(n - 1, '#');
-        Value := Value.PadRight(n - 1, '#');
+        Value := Value.PadLeft(n - 1 + StrLen(Value), '#');
+        Value := Value.PadRight(n - 1 + StrLen(Value), '#');
 
-        for i := 0 to (StrLen(Value) - (n - 1)) do begin
+        for i := 1 to (StrLen(Value) - (n - 1)) do begin
             nGramList.Add(Value.Substring(i, n));
         end;
     end;

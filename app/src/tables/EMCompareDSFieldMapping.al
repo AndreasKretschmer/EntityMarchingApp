@@ -80,6 +80,7 @@ table 77003 "EM Compare DS Field Mapping"
         {
             Caption = 'Weighted Similarity';
             DataClassification = CustomerContent;
+            DecimalPlaces = 5 : 5;
         }
     }
     keys

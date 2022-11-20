@@ -64,8 +64,8 @@ codeunit 77020 "EM Initiaize Setup Data"
     begin
         EMCompareDatasets.Init();
         EMCompareDatasets."Entry No." := 1;
-        EMCompareDatasets."Dataset 1 Table No." := 77005;
-        EMCompareDatasets."Dataset 2 Table No." := 77006;
+        EMCompareDatasets."Dataset 1 Table No." := Database::"EM Example Dataset 1";
+        EMCompareDatasets."Dataset 2 Table No." := Database::"EM Example Dataset 2";
         EMCompareDatasets."Blocking Method" := Enum::"EM Blocking Method"::Soundex;
         EMCompareDatasets."Classification Method" := Enum::"EM Classification Method"::Similarity;
         EMCompareDatasets."Classification Threshold" := 0.8;

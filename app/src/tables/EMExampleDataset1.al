@@ -1,4 +1,4 @@
-table 77005 "EM Example Dataset 1"
+table 77010 "EM Example Dataset 1"
 {
     Caption = 'Example Dataset 1';
     DataClassification = CustomerContent;
