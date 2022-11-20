@@ -48,11 +48,16 @@ page 77001 "EM Compare Datasets"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Classification Method field.';
                 }
+                field("Classification Threshold"; Rec."Classification Threshold")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Classification Threshold field.';
+                }
             }
             part(FieldMapping; "EM Compare DS Field Mappings")
             {
                 ApplicationArea = all;
-                SubPageLink = "Compare Dataset Entry No." = field("Entry No.");
+                SubPageLink = "Compare Dataset Entry No." = field("Entry No."), "Dataset 1 Table No." = field("Dataset 1 Table No."), "Dataset 2 Table No." = field("Dataset 2 Table No.");
             }
         }
     }

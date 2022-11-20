@@ -19,6 +19,7 @@ page 77004 "EM Compare DS Blocking Buffer"
                 field("DataSet Record Id"; Rec."DataSet Record Id")
                 {
                     ApplicationArea = All;
+                    Visible = false;
                     ToolTip = 'Specifies the value of the DataSet Record Id field.';
                 }
                 field("Blocking Key"; Rec."Blocking Key")

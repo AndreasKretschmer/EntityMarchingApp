@@ -46,7 +46,12 @@ table 77002 "EM Compare Datasets"
         }
         field(7; "Classification Method"; Enum "EM Classification Method")
         {
-            Caption = 'Blocking Method';
+            Caption = 'Classification Method';
+            DataClassification = CustomerContent;
+        }
+        field(8; "Classification Threshold"; Decimal)
+        {
+            Caption = 'Classification Thresholdd';
             DataClassification = CustomerContent;
         }
     }

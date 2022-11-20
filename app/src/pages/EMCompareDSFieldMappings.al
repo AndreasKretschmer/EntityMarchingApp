@@ -62,9 +62,9 @@ page 77003 "EM Compare DS Field Mappings"
 
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     begin
-        Rec."Compare Dataset Entry No." := CompareDSEntryNo;
-        Rec."Dataset 1 Table No." := TableIdDS1;
-        Rec."Dataset 2 Table No." := TableIdDS2;
+        // Rec."Compare Dataset Entry No." := CompareDSEntryNo;
+        // Rec."Dataset 1 Table No." := TableIdDS1;
+        // Rec."Dataset 2 Table No." := TableIdDS2;
     end;
 
     procedure SetEntryNoAndTableId(EntryNo: Integer; TableIdDataset1: Integer; TableIdDataset2: Integer)

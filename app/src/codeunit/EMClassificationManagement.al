@@ -6,11 +6,11 @@ codeunit 77003 "EM Classification Management"
             EMCompareDatasets."Classification Method"::Exact:
                 ExactClassification(SimilarityDict);
             EMCompareDatasets."Classification Method"::MinSim:
-                MinSimilarityClassification(SimilarityDict, 0.8);
+                MinSimilarityClassification(SimilarityDict, EMCompareDatasets."Classification Threshold");
             EMCompareDatasets."Classification Method"::Similarity:
-                SimilarityClassification(SimilarityDict, 0.8);
+                SimilarityClassification(SimilarityDict, EMCompareDatasets."Classification Threshold");
             EMCompareDatasets."Classification Method"::WeightedSim:
-                WeightedSimilarityClassification(SimilarityDict, 0.8, GetWeightSimVec(EMCompareDatasets));
+                WeightedSimilarityClassification(SimilarityDict, EMCompareDatasets."Classification Threshold", GetWeightSimVec(EMCompareDatasets));
         end;
     end;
 
