@@ -16,7 +16,8 @@ codeunit 77002 "EM Comparison Management"
                 BlockingDictDS2.Get(BlockKey, RecordIdListDS2);
                 foreach RecordIDDS1 in RecordIdListDS1 do
                     foreach RecordIDDS2 in RecordIdListDS2 do
-                        SimilarityDict.Add(Format(RecordIDDS1) + ';' + Format(RecordIDDS2), CompareRecords(RecordIDDS1, RecordIDDS2, EMCompareDSFieldMapping));
+                        if (RecordIDDS1 <> RecordIDDS2) and (RecordIDDS1.TableNo <> RecordIDDS2.TableNo) then
+                            SimilarityDict.Add(Format(RecordIDDS1) + ';' + Format(RecordIDDS2), CompareRecords(RecordIDDS1, RecordIDDS2, EMCompareDSFieldMapping));
             end;
     end;
 
