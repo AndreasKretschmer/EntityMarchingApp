@@ -5,6 +5,7 @@ page 77001 "EM Compare Datasets"
     PageType = List;
     SourceTable = "EM Compare Datasets";
     UsageCategory = Tasks;
+    PromotedActionCategories = 'New,Process,Report,Import,Navigation';
 
     layout
     {
@@ -65,7 +66,7 @@ page 77001 "EM Compare Datasets"
                 ApplicationArea = All;
                 Caption = 'Blocking Buffer';
                 Promoted = true;
-                PromotedCategory = Process;
+                PromotedCategory = Category5;
                 PromotedIsBig = true;
                 Image = BulletList;
 
@@ -89,7 +90,7 @@ page 77001 "EM Compare Datasets"
                 ApplicationArea = All;
                 Caption = 'Field Mappings';
                 Promoted = true;
-                PromotedCategory = Process;
+                PromotedCategory = Category5;
                 PromotedIsBig = true;
                 Image = BulletList;
                 RunObject = page "EM Compare DS Field Mappings";
@@ -102,11 +103,28 @@ page 77001 "EM Compare Datasets"
                 ApplicationArea = All;
                 Caption = 'SLK Field Setup';
                 Promoted = true;
-                PromotedCategory = Process;
+                PromotedCategory = Category5;
                 PromotedIsBig = true;
                 Image = BulletList;
                 RunObject = page "EM SLK Field Setup Card";
                 RunPageMode = Create;
+            }
+
+            action("Example Dataset 1")
+            {
+                ApplicationArea = All;
+                Caption = 'Example Dataset 1';
+                Image = ExpandAll;
+                RunObject = page "EM Example Dataset 1";
+                RunPageMode = View;
+            }
+            action("Example Dataset 2")
+            {
+                ApplicationArea = All;
+                Caption = 'Example Dataset 2';
+                Image = ExpandAll;
+                RunObject = page "EM Example Dataset 2";
+                RunPageMode = View;
             }
         }
 
@@ -132,7 +150,7 @@ page 77001 "EM Compare Datasets"
             action("Calculate Weights")
             {
                 ApplicationArea = All;
-                Caption = 'Calculate Weights';
+                Caption = 'Calculate Similarity Weights';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -144,6 +162,43 @@ page 77001 "EM Compare Datasets"
                 begin
                     EMClassificationManagement.CalculateWeightSimVec(Rec);
                 end;
+            }
+
+            group(Import)
+            {
+                Image = Import;
+
+                action("Import Example Dataset 1")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Import Example Dataset 1';
+                    Promoted = true;
+                    PromotedCategory = Category4;
+                    Image = Import;
+
+                    trigger OnAction()
+                    var
+                        ImportExampleDataset1: XmlPort "EM Import Exmalpe Dataset";
+                    begin
+                        ImportExampleDataset1.Run();
+                    end;
+                }
+
+                action("Import Example Dataset 2")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Import Example Dataset 2';
+                    Promoted = true;
+                    PromotedCategory = Category4;
+                    Image = Import;
+
+                    trigger OnAction()
+                    var
+                        ImportExampleDataset2: XmlPort "EM Import Exmalpe Dataset 2";
+                    begin
+                        ImportExampleDataset2.Run();
+                    end;
+                }
             }
         }
     }

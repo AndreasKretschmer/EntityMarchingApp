@@ -9,7 +9,7 @@
   "EULA": "http://www.google.de",
   "help": "http://www.google.de",
   "url": "http://www.google.de",
-  "logo": "res/logo.png",
+  "logo": "",
   "contextSensitiveHelpUrl": "http://www.google.de",
   "applicationInsightsConnectionString": "https://learn.microsoft.com/dynamics365/business-central/dev-itpro/administration/telemetry-overview",
   "dependencies": [],
