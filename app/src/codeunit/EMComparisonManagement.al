@@ -29,7 +29,7 @@ codeunit 77002 "EM Comparison Management"
         ValueDS2: Text;
     begin
         Clear(SimmiliarityList);
-        if (not DS1RecordRef.Get(RecordIDDS1)) and (not DS2RecordRef.Get(RecordIDDS2)) then
+        if (not DS1RecordRef.Get(RecordIDDS1)) or (not DS2RecordRef.Get(RecordIDDS2)) then
             exit;
 
         if EMCompareDSFieldMapping.FindSet() then
