@@ -49,15 +49,73 @@ codeunit 77002 "EM Comparison Management"
             EMDistanceMethods::Dice:
                 exit(GetDiceSimilarity(ValueDS1, ValueDS2));
             EMDistanceMethods::Edit:
-                exit(GetEditSimilarity(ValueDS1, ValueDS2)); //TODO
+                exit(GetEditSimilarity(ValueDS1, ValueDS2));
             EMDistanceMethods::Exact:
                 exit(GetExactSimilarity(ValueDS1, ValueDS2));
             EMDistanceMethods::Jaccard:
                 exit(GetJaccardSimilarity(ValueDS1, ValueDS2));
             EMDistanceMethods::JaroWinkler:
-                ; //TODO
+                exit(GetJaroWinklerDistance(ValueDS1, ValueDS2));
         end;
     end;
+
+    procedure GetJaroWinklerDistance(string1: Text; string2: Text): Decimal
+    VAR
+        Math: Codeunit Math;
+        len1, len2 : Integer;
+        halflen: Integer;
+        i: Integer;
+        j: Integer;
+        matchingcharacters: Integer;
+        transpositions: Integer;
+        prefixweight: Decimal;
+        distance: Decimal;
+    begin
+        len1 := StrLen(string1);
+        len2 := StrLen(string2);
+
+        if (len1 = 0) or (len2 = 0) then
+            exit(0);
+        if (string1 = string2) then
+            exit(1);
+
+        halflen := Round((Math.Max(len1, len2) / 2) - 1, 0);
+        matchingcharacters := 0;
+        transpositions := 0;
+        for i := 1 to len1 do
+            for j := Math.Max(1, i - halflen) to Math.Min(len2, i + halflen) do
+                if (string1[i] = string2[j]) then begin
+                    matchingcharacters := matchingcharacters + 1;
+                    exit;
+                end;
+        if (matchingcharacters = 0) then
+            exit(0);
+        i := 1;
+        j := 1;
+        while (i <= len1) and (j <= len2) do begin
+            if (string1[i] = string2[j]) then begin
+                i := i + 1;
+                j := j + 1;
+            end else
+                if (string1[i] = string2[j + 1]) and (string1[i + 1] = string2[j]) then begin
+                    transpositions := transpositions + 1;
+                    i := i + 2;
+                    j := j + 2;
+                end else begin
+                    i := i + 1;
+                    j := j + 1;
+                end;
+        end;
+        transpositions := transpositions / 2;
+        distance := ((matchingcharacters / len1) + (matchingcharacters / len2) + ((matchingcharacters - transpositions) / matchingcharacters)) / 3;
+        prefixweight := 0;
+        i := 1;
+        while (i <= 4) and (i <= Math.Min(len1, len2)) and (string1[i] = string2[i]) do
+            i := i + 1;
+        prefixweight := i * 0.1;
+        exit(distance + prefixweight * (1 - distance));
+    end;
+
 
     local procedure GetExactSimilarity(ValueDS1: Text; ValueDS2: Text): Decimal
     begin
@@ -155,21 +213,48 @@ codeunit 77002 "EM Comparison Management"
 
     local procedure GetEditSimilarity(ValueDS1: Text; ValueDS2: Text): Decimal
     var
-        n: Integer;
+        Math: Codeunit Math;
         m: Integer;
-        List1: List of [Text];
-        List2: List of [Text];
-        CharText: Text;
+        n: Integer;
+        d: List of [Integer];
+        i: Integer;
+        j: Integer;
+        cost: Integer;
+        temp: Integer;
+        Value1: Integer;
+        Value2: Integer;
     begin
-        if CheckIfValuesHaveNoValue(ValueDS1, ValueDS2) then
+        // Initialize the matrix
+        m := StrLen(ValueDS1);
+        n := StrLen(ValueDS2);
+        if (n = 0) and (m = 0) then
             exit(0);
 
         if ValueDS1 = ValueDS2 then
             exit(1);
 
-        n := StrLen(ValueDS1);
-        m := StrLen(ValueDS2);
-
+        Clear(d);
+        d.AddRange(0, n);
+        for i := 1 to m do begin
+            d.Get(0, temp);
+            d.Insert(0, i);
+            for j := 1 to n do begin
+                if ValueDS1[i - 1] = ValueDS2[j - 1] then begin
+                    cost := 0;
+                end
+                else begin
+                    cost := 1;
+                end;
+                d.Get(j, Value1);
+                d.Get(j - 1, Value2);
+                d.Insert(j, Math.Min(Math.Min(Value1 + 1, Value2 + 1), temp + cost));
+                d.Get(j, temp);
+            end;
+        end;
+        d.Get(n, cost);
+        cost := 1 - (cost / Math.Max(n, m));
+        // Return the edit distance
+        exit(cost);
     end;
 
     local procedure CreateNgrams(Value: Text; n: Integer) nGramList: List of [Text];

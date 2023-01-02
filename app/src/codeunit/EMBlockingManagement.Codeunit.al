@@ -224,7 +224,7 @@ codeunit 77001 "EM Blocking Management"
         NameCharIndexList.Add(3);
         SLKCoding += ConvertNameToSLK(Format(SourceFieldrefFirstName.Value), NameCharIndexList);
 
-        SLKCoding += ConvertDateOfBirthToSLK(SourceFieldrefDateOfBirth.Value);
+        SLKCoding += ConvertDateOfBirthToSLK(Format(SourceFieldrefDateOfBirth.Value));
         SLKCoding += ConvertGenderToSLK(Format(SourceFieldrefGender.Value));
     end;
 
@@ -264,9 +264,9 @@ codeunit 77001 "EM Blocking Management"
             exit('1');
     end;
 
-    local procedure ConvertDateOfBirthToSLK(DateOfBirth: Date): Text
+    local procedure ConvertDateOfBirthToSLK(DateOfBirth: Text): Text
     begin
-        if DateOfBirth = 0D then
+        if DateOfBirth = '' then
             exit('UUU');
         exit(Format(DateOfBirth, 0, '<Day,2><Month,2><Year,4>'))
     end;

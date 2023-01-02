@@ -1,7 +1,7 @@
 ﻿install-module bccontainerhelper -Force
 Get-InstalledModule
 
-$containerName = 'bc'
+$containerName = 'entitymatching'
 $password = 'P@ssw0rd'
 $securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
 $credential = New-Object pscredential 'admin', $securePassword
@@ -16,5 +16,4 @@ New-BcContainer `
     -artifactUrl $artifactUrl `
     -imageName 'entitymatching' `
     -licenseFile $licenseFile ``
-    -memoryLimit 8G `
-    -updateHosts
+    -memoryLimit 8G
