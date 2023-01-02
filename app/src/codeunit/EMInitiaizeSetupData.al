@@ -5,12 +5,12 @@ codeunit 77020 "EM Initiaize Setup Data"
     trigger OnRun()
     begin
         ResetAllSetupTables();
-        CreateSoundexBlockingValues();
+        CreateSoundexBlockingValuesEN();
         ImportExampleData();
         CreateSampleSetup();
     end;
 
-    local procedure CreateSoundexBlockingValues()
+    local procedure CreateSoundexBlockingValuesEN()
     begin
         InsertSoundexBlockingValue('b', '1');
         InsertSoundexBlockingValue('f', '1');
@@ -30,6 +30,32 @@ codeunit 77020 "EM Initiaize Setup Data"
         InsertSoundexBlockingValue('m', '5');
         InsertSoundexBlockingValue('n', '5');
         InsertSoundexBlockingValue('r', '6');
+    end;
+
+    local procedure CreateSoundexBlockingValuesDE()
+    begin
+        InsertSoundexBlockingValue('b', '1');
+        InsertSoundexBlockingValue('f', '1');
+        InsertSoundexBlockingValue('p', '1');
+        InsertSoundexBlockingValue('v', '1');
+        InsertSoundexBlockingValue('w', '1');
+        InsertSoundexBlockingValue('v', '1');
+        InsertSoundexBlockingValue('c', '2');
+        InsertSoundexBlockingValue('g', '2');
+        InsertSoundexBlockingValue('x', '2');
+        InsertSoundexBlockingValue('k', '2');
+        InsertSoundexBlockingValue('q', '2');
+        InsertSoundexBlockingValue('s', '2');
+        InsertSoundexBlockingValue('ß', '2');
+        InsertSoundexBlockingValue('z', '2');
+        InsertSoundexBlockingValue('z', '2');
+        InsertSoundexBlockingValue('d', '3');
+        InsertSoundexBlockingValue('t', '3');
+        InsertSoundexBlockingValue('l', '4');
+        InsertSoundexBlockingValue('m', '5');
+        InsertSoundexBlockingValue('n', '5');
+        InsertSoundexBlockingValue('r', '6');
+        InsertSoundexBlockingValue('ch', '7'); //TODO ch would not be recognized atm
     end;
 
     local procedure InsertSoundexBlockingValue(Character: Text[1]; Value: Text[1])
