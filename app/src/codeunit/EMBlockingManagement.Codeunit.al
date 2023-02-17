@@ -134,20 +134,26 @@ codeunit 77001 "EM Blocking Management"
     local procedure CreateBlockingKeyForDataset(TableNo: Integer; EMCompareDatasets: Record "EM Compare Datasets"; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean)
     var
         SourceRecordRef: RecordRef;
+        BlockingKey: Text;
     begin
         SourceRecordRef.Open(TableNo);
         if SourceRecordRef.FindSet() then
             repeat
-                //TODO Maybe the Blocking Key should be updated, if the SourceRecord was modified
-                if not ExistsBlockingBufferEntryForRecordRef(SourceRecordRef, EMCompareDatasets."Blocking Method") then begin
-                    CreateBlockingBufferEntries(
-                        SourceRecordRef.Number,
-                        SourceRecordRef.RecordId,
-                        CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1),
-                        EMCompareDatasets."Blocking Method"
-                    );
-                end;
+                HandleBlockingForRecord(EMCompareDatasets, SourceRecordRef, EMCompareDSFieldMapping, Dataset1);
             until SourceRecordRef.Next() = 0;
+    end;
+
+    local procedure ModifyBlockingBufferEntry(SourceRecordRef: RecordRef; BlockingMehtod: Enum "EM Blocking Method"; NewBlockingKey: Text)
+    var
+        EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
+    begin
+        if not EMCompareDSBlockingBuff.Get(BlockingMehtod, SourceRecordRef.Number, SourceRecordRef.RecordId) then
+            exit;
+        if NewBlockingKey = EMCompareDSBlockingBuff."Blocking Key" then
+            exit;
+
+        EMCompareDSBlockingBuff.Validate("Blocking Key", NewBlockingKey);
+        EMCompareDSBlockingBuff.Modify(true);
     end;
 
     procedure ExistsBlockingBufferEntryForRecordRef(SourceRecordRef: RecordRef; BlockingMehtod: Enum "EM Blocking Method"): Boolean
@@ -270,4 +276,50 @@ codeunit 77001 "EM Blocking Management"
             exit('UUU');
         exit(Format(DateOfBirth, 0, '<Day,2><Month,2><Year,4>'))
     end;
+
+    local procedure HandleBlockingForRecord(EMCompareDatasets: Record "EM Compare Datasets"; SourceRecordRef: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean)
+    var
+        BlockingKey: Text;
+    begin
+        BlockingKey := CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1);
+        if not ExistsBlockingBufferEntryForRecordRef(SourceRecordRef, EMCompareDatasets."Blocking Method") then
+            CreateBlockingBufferEntries(
+                SourceRecordRef.Number,
+                SourceRecordRef.RecordId,
+                BlockingKey,
+                EMCompareDatasets."Blocking Method"
+            )
+        else
+            ModifyBlockingBufferEntry(SourceRecordRef, EMCompareDatasets."Blocking Method", BlockingKey);
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, 'OnAfterOnDatabaseModify', '', false, false)]
+    local procedure OnAfterOnDatabaseModify(RecRef: RecordRef)
+    var
+        EMCompareDatasets: Record "EM Compare Datasets";
+        EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping";
+        Dataset1: Boolean;
+    begin
+        Dataset1 := true;
+        EMCompareDatasets.Reset();
+        EMCompareDatasets.SetRange("Dataset 1 Table No.", RecRef.Number);
+        if EMCompareDatasets.IsEmpty() then begin
+            EMCompareDatasets.Reset();
+            EMCompareDatasets.SetRange("Dataset 2 Table No.", RecRef.Number);
+            Dataset1 := false;
+        end;
+
+        if not EMCompareDatasets.FindSet() then
+            exit;
+
+        repeat
+            EMCompareDatasets.FilterFieldMappingBlocking(EMCompareDSFieldMapping);
+            if not EMCompareDSFieldMapping.IsEmpty() then
+                HandleBlockingForRecord(EMCompareDatasets, RecRef, EMCompareDSFieldMapping, Dataset1);
+        until EMCompareDatasets.Next() = 0;
+    end;
+
+
 }
+
+

@@ -12,53 +12,53 @@ codeunit 77020 "EM Initiaize Setup Data"
 
     local procedure CreateSoundexBlockingValuesEN()
     begin
-        InsertSoundexBlockingValue('b', '1');
-        InsertSoundexBlockingValue('f', '1');
-        InsertSoundexBlockingValue('p', '1');
-        InsertSoundexBlockingValue('v', '1');
-        InsertSoundexBlockingValue('c', '2');
-        InsertSoundexBlockingValue('g', '2');
-        InsertSoundexBlockingValue('j', '2');
-        InsertSoundexBlockingValue('k', '2');
-        InsertSoundexBlockingValue('q', '2');
-        InsertSoundexBlockingValue('s', '2');
-        InsertSoundexBlockingValue('x', '2');
-        InsertSoundexBlockingValue('z', '2');
-        InsertSoundexBlockingValue('d', '3');
-        InsertSoundexBlockingValue('t', '3');
-        InsertSoundexBlockingValue('l', '4');
-        InsertSoundexBlockingValue('m', '5');
-        InsertSoundexBlockingValue('n', '5');
-        InsertSoundexBlockingValue('r', '6');
+        InsertSoundexBlockingValue('b', '1', 'EN');
+        InsertSoundexBlockingValue('f', '1', 'EN');
+        InsertSoundexBlockingValue('p', '1', 'EN');
+        InsertSoundexBlockingValue('v', '1', 'EN');
+        InsertSoundexBlockingValue('c', '2', 'EN');
+        InsertSoundexBlockingValue('g', '2', 'EN');
+        InsertSoundexBlockingValue('j', '2', 'EN');
+        InsertSoundexBlockingValue('k', '2', 'EN');
+        InsertSoundexBlockingValue('q', '2', 'EN');
+        InsertSoundexBlockingValue('s', '2', 'EN');
+        InsertSoundexBlockingValue('x', '2', 'EN');
+        InsertSoundexBlockingValue('z', '2', 'EN');
+        InsertSoundexBlockingValue('d', '3', 'EN');
+        InsertSoundexBlockingValue('t', '3', 'EN');
+        InsertSoundexBlockingValue('l', '4', 'EN');
+        InsertSoundexBlockingValue('m', '5', 'EN');
+        InsertSoundexBlockingValue('n', '5', 'EN');
+        InsertSoundexBlockingValue('r', '6', 'EN');
     end;
 
     local procedure CreateSoundexBlockingValuesDE()
     begin
-        InsertSoundexBlockingValue('b', '1');
-        InsertSoundexBlockingValue('f', '1');
-        InsertSoundexBlockingValue('p', '1');
-        InsertSoundexBlockingValue('v', '1');
-        InsertSoundexBlockingValue('w', '1');
-        InsertSoundexBlockingValue('v', '1');
-        InsertSoundexBlockingValue('c', '2');
-        InsertSoundexBlockingValue('g', '2');
-        InsertSoundexBlockingValue('x', '2');
-        InsertSoundexBlockingValue('k', '2');
-        InsertSoundexBlockingValue('q', '2');
-        InsertSoundexBlockingValue('s', '2');
-        InsertSoundexBlockingValue('ß', '2');
-        InsertSoundexBlockingValue('z', '2');
-        InsertSoundexBlockingValue('z', '2');
-        InsertSoundexBlockingValue('d', '3');
-        InsertSoundexBlockingValue('t', '3');
-        InsertSoundexBlockingValue('l', '4');
-        InsertSoundexBlockingValue('m', '5');
-        InsertSoundexBlockingValue('n', '5');
-        InsertSoundexBlockingValue('r', '6');
-        InsertSoundexBlockingValue('ch', '7'); //TODO ch would not be recognized atm
+        InsertSoundexBlockingValue('b', '1', '');
+        InsertSoundexBlockingValue('f', '1', '');
+        InsertSoundexBlockingValue('p', '1', '');
+        InsertSoundexBlockingValue('v', '1', '');
+        InsertSoundexBlockingValue('w', '1', '');
+        InsertSoundexBlockingValue('v', '1', '');
+        InsertSoundexBlockingValue('c', '2', '');
+        InsertSoundexBlockingValue('g', '2', '');
+        InsertSoundexBlockingValue('x', '2', '');
+        InsertSoundexBlockingValue('k', '2', '');
+        InsertSoundexBlockingValue('q', '2', '');
+        InsertSoundexBlockingValue('s', '2', '');
+        InsertSoundexBlockingValue('ß', '2', '');
+        InsertSoundexBlockingValue('z', '2', '');
+        InsertSoundexBlockingValue('z', '2', '');
+        InsertSoundexBlockingValue('d', '3', '');
+        InsertSoundexBlockingValue('t', '3', '');
+        InsertSoundexBlockingValue('l', '4', '');
+        InsertSoundexBlockingValue('m', '5', '');
+        InsertSoundexBlockingValue('n', '5', '');
+        InsertSoundexBlockingValue('r', '6', '');
+        InsertSoundexBlockingValue('ch', '7', ''); //TODO ch would not be recognized at the moment
     end;
 
-    local procedure InsertSoundexBlockingValue(Character: Text[1]; Value: Text[1])
+    local procedure InsertSoundexBlockingValue(Character: Text[1]; Value: Text[1]; LanguageCode: Code[20])
     var
         EMSoundexBlockingValues: Record "EM Soundex Blocking Values";
     begin
@@ -68,6 +68,7 @@ codeunit 77020 "EM Initiaize Setup Data"
         EMSoundexBlockingValues.Init();
         EMSoundexBlockingValues.Character := Character;
         EMSoundexBlockingValues.Value := Value;
+        EMSoundexBlockingValues."Language Code" := LanguageCode;
         EMSoundexBlockingValues.Insert(true);
     end;
 

@@ -17,6 +17,11 @@ page 77002 "EM Soundex Blocking Values"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Character field.';
                 }
+                field("Language Code"; Rec."Language Code")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Language Code field.';
+                }
                 field("Value"; Rec."Value")
                 {
                     ApplicationArea = All;
