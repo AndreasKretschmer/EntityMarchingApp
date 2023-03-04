@@ -70,7 +70,7 @@ codeunit 77001 "EM Blocking Management"
         EMCompareDSBlockingBuff.Insert(true);
     end;
 
-    local procedure CalculateBlockingKeys(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean) BlockingKey: Text;
+    local procedure CalculateBlockingKey(BlockingMethod: Enum "EM Blocking Method"; SourceRecordref: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean) BlockingKey: Text;
     var
         FieldRefFamilyName: FieldRef;
         FieldRefFirstName: FieldRef;
@@ -279,18 +279,23 @@ codeunit 77001 "EM Blocking Management"
 
     local procedure HandleBlockingForRecord(EMCompareDatasets: Record "EM Compare Datasets"; SourceRecordRef: RecordRef; var EMCompareDSFieldMapping: Record "EM Compare DS Field Mapping"; Dataset1: Boolean)
     var
+        EMCompareDSBlockingBuff: Record "EM Compare DS Blocking Buff.";
+        SourceRecRefModifiedAtDateTime: DateTime;
         BlockingKey: Text;
     begin
-        BlockingKey := CalculateBlockingKeys(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1);
-        if not ExistsBlockingBufferEntryForRecordRef(SourceRecordRef, EMCompareDatasets."Blocking Method") then
+        if not EMCompareDSBlockingBuff.Get(EMCompareDatasets."Blocking Method", SourceRecordRef.Number, SourceRecordRef.RecordId) then
             CreateBlockingBufferEntries(
                 SourceRecordRef.Number,
                 SourceRecordRef.RecordId,
-                BlockingKey,
+                CalculateBlockingKey(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1),
                 EMCompareDatasets."Blocking Method"
             )
-        else
-            ModifyBlockingBufferEntry(SourceRecordRef, EMCompareDatasets."Blocking Method", BlockingKey);
+        else begin
+            Evaluate(SourceRecRefModifiedAtDateTime, SourceRecordRef.Field(SourceRecordRef.SystemModifiedAtNo).Value);
+            if EMCompareDSBlockingBuff.SystemModifiedAt < SourceRecRefModifiedAtDateTime then
+                ModifyBlockingBufferEntry(SourceRecordRef, EMCompareDatasets."Blocking Method", CalculateBlockingKey(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1));
+        end;
+
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, 'OnAfterOnDatabaseModify', '', false, false)]
