@@ -210,6 +210,12 @@ codeunit 77001 "EM Blocking Management"
     local procedure GetSingleCharacterOfStringFromLeftToRight(var TextValue: Text) c: Text[1]
     begin
         c := CopyStr(TextValue, 1, 1);
+        if c.ToUpper() = 'C' then
+            if CopyStr(TextValue, 2, 1).ToUpper() = 'H' then begin
+                c := '$';
+                TextValue := CopyStr(TextValue, 3);
+                exit;
+            end;
         TextValue := CopyStr(TextValue, 2);
     end;
 

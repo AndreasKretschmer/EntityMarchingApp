@@ -1,7 +1,7 @@
 {
   "id": "595ecb8e-dd95-4b51-8ea7-b9d6ef9f2582",
-  "name": "app",
-  "publisher": "Default publisher",
+  "name": "Entity Matching App",
+  "publisher": "Andreas Kretschmer",
   "version": "1.0.0.0",
   "brief": "Entity Matching App",
   "description": "Matches Entity within a database of diffrent tables or the same table",
@@ -14,15 +14,15 @@
   "applicationInsightsConnectionString": "https://learn.microsoft.com/dynamics365/business-central/dev-itpro/administration/telemetry-overview",
   "dependencies": [],
   "screenshots": [],
-  "platform": "18.0.0.0",
-  "application": "18.0.0.0",
+  "platform": "23.0.0.0",
+  "application": "23.0.0.0",
   "idRanges": [
     {
       "from": 77000,
       "to": 78000
     }
   ],
-  "runtime": "7.2",
+  "runtime": "12.0",
   "target": "OnPrem",  
   "features": [
     "TranslationFile", 

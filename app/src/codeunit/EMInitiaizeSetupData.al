@@ -55,7 +55,7 @@ codeunit 77020 "EM Initiaize Setup Data"
         InsertSoundexBlockingValue('m', '5', '');
         InsertSoundexBlockingValue('n', '5', '');
         InsertSoundexBlockingValue('r', '6', '');
-        InsertSoundexBlockingValue('ch', '7', ''); //TODO ch would not be recognized at the moment
+        InsertSoundexBlockingValue('$', '7', ''); //$ represents the ch
     end;
 
     local procedure InsertSoundexBlockingValue(Character: Text[1]; Value: Text[1]; LanguageCode: Code[20])
