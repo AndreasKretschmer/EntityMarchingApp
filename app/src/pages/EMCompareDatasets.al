@@ -143,6 +143,16 @@ page 77001 "EM Compare Datasets"
 
         area(Processing)
         {
+            action("Init Demo Setup")
+            {
+                ApplicationArea = All;
+                Caption = 'Init Demo Setup';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                Image = Setup;
+                RunObject = codeunit "EM Initiaize Setup Data";
+            }
             action(Process)
             {
                 ApplicationArea = All;
