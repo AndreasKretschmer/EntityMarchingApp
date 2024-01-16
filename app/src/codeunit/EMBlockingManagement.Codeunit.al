@@ -297,9 +297,9 @@ codeunit 77001 "EM Blocking Management"
                 EMCompareDatasets."Blocking Method"
             )
         else begin
-            Evaluate(SourceRecRefModifiedAtDateTime, SourceRecordRef.Field(SourceRecordRef.SystemModifiedAtNo).Value);
-            if EMCompareDSBlockingBuff.SystemModifiedAt < SourceRecRefModifiedAtDateTime then
-                ModifyBlockingBufferEntry(SourceRecordRef, EMCompareDatasets."Blocking Method", CalculateBlockingKey(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1));
+            // Evaluate(SourceRecRefModifiedAtDateTime, ); //TODO throws error
+            // if EMCompareDSBlockingBuff.SystemModifiedAt < SourceRecordRef.Field(SourceRecordRef.SystemModifiedAtNo). then
+            ModifyBlockingBufferEntry(SourceRecordRef, EMCompareDatasets."Blocking Method", CalculateBlockingKey(EMCompareDatasets."Blocking Method", SourceRecordRef, EMCompareDSFieldMapping, Dataset1));
         end;
 
     end;

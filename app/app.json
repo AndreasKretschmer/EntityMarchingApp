@@ -2,7 +2,7 @@
   "id": "595ecb8e-dd95-4b51-8ea7-b9d6ef9f2582",
   "name": "Entity Matching App",
   "publisher": "Andreas Kretschmer",
-  "version": "1.0.0.0",
+  "version": "1.0.0.1",
   "brief": "Entity Matching App",
   "description": "Matches Entity within a database of diffrent tables or the same table",
   "privacyStatement": "http://www.google.de",

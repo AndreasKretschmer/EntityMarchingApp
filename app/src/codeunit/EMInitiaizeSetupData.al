@@ -6,6 +6,7 @@ codeunit 77020 "EM Initiaize Setup Data"
     begin
         ResetAllSetupTables();
         CreateSoundexBlockingValuesEN();
+        CreateSoundexBlockingValuesDE();
         ImportExampleData();
         CreateSampleSetup();
     end;
