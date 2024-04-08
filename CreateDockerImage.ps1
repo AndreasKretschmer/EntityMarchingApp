@@ -2,12 +2,12 @@
 Get-InstalledModule
 
 $containerName = 'entitymatching'
-$password = 'P@ssw0rd'
+$password = '#######'
 $securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
 $credential = New-Object pscredential 'admin', $securePassword
 $auth = 'UserPassword'
 $artifactUrl = Get-BcArtifactUrl -type 'Sandbox' -country 'de' -select 'Latest'
-$licenseFile = 'C:\Users\KRAN\Desktop\5306956.bclicense'
+$licenseFile = ''
 New-BcContainer `
     -accept_eula `
     -containerName $containerName `
